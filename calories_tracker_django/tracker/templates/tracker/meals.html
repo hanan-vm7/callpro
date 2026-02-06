@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Meals | CalPro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #5ab9c7, #2C3E50);
+            color: #ffffff;
+            padding-bottom: 40px;
+        }
+
+        /* Navbar - Matching Theme */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .navbar::after {
+            content: "";
+            display: block;
+            height: 2px;
+            background: #E74C3C;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .logo {
+            font-size: 40px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #cbd5f5;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        h2.page-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Hide Radio Buttons */
+        input[type="radio"] {
+            display: none;
+        }
+
+        /* Tab Labels - Glass Style */
+        .food-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.6s ease-out 0.1s both;
+        }
+
+        .food-tabs label {
+            padding: 12px 30px;
+            border-radius: 25px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #cbd5f5;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .food-tabs label:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        /* Active Tab States */
+        #today:checked ~ .food-tabs label[for="today"],
+        #week:checked ~ .food-tabs label[for="week"],
+        #month:checked ~ .food-tabs label[for="month"] {
+            background: #E74C3C;
+            color: white;
+            border-color: #E74C3C;
+            box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        /* Tab Content Container */
+        .food-forms {
+            position: relative;
+            min-height: 400px;
+        }
+
+        /* Individual Tab Panels */
+        .form {
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        /* Show Active Tab */
+        #today:checked ~ .food-forms .today,
+        #week:checked ~ .food-forms .week,
+        #month:checked ~ .food-forms .month {
+            display: block;
+        }
+
+        /* Meal Cards - Glassmorphism */
+        .meal-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            animation: slideUp 0.5s ease-out both;
+        }
+
+        .meal-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.12);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            border-color: rgba(231, 76, 60, 0.3);
+        }
+
+        .meal-left {
+            flex: 1;
+        }
+
+        .meal-name {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .meal-meta {
+            color: #cbd5f5;
+            font-size: 0.95rem;
+        }
+
+        .meal-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+        }
+
+        .badge.calories {
+            background: rgba(231, 76, 60, 0.2);
+            color: #E74C3C;
+            border-color: rgba(231, 76, 60, 0.3);
+        }
+
+        .badge.protein {
+            background: rgba(90, 185, 199, 0.2);
+            color: #5ab9c7;
+            border-color: rgba(90, 185, 199, 0.3);
+        }
+
+        /* Delete Button */
+        .delete-btn {
+            background: transparent;
+            color: #f87171;
+            border: 2px solid #f87171;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .delete-btn:hover {
+            background: #f87171;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(248, 113, 113, 0.4);
+        }
+
+        /* Empty State */
+        .no-meals {
+            text-align: center;
+            padding: 60px 20px;
+            color: #cbd5f5;
+            font-size: 1.2rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            border: 2px dashed rgba(255,255,255,0.1);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stagger animation for cards */
+        .meal-card:nth-child(1) { animation-delay: 0.1s; }
+        .meal-card:nth-child(2) { animation-delay: 0.2s; }
+        .meal-card:nth-child(3) { animation-delay: 0.3s; }
+        .meal-card:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .food-tabs {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .food-tabs label {
+                text-align: center;
+                width: 100%;
+            }
+
+            .meal-card {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .meal-right {
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .page-container {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">CalPro</div>
+    <div class="nav-links">
+        <a href="{% url 'home' %}">Dashboard</a>
+        <a href="{% url 'add_food' %}">Log Food</a>
+        <a href="{% url 'report' %}">Reports</a>
+    </div>
+</nav>
+
+<div class="page-container">
+
+    <h2 class="page-title">🍽 Meal History</h2>
+
+    <!-- RADIO BUTTONS -->
+    <input type="radio" name="meal_tab" id="today" checked>
+    <input type="radio" name="meal_tab" id="week">
+    <input type="radio" name="meal_tab" id="month">
+
+    <!-- TABS -->
+    <div class="food-tabs">
+        <label for="today">📅 Today</label>
+        <label for="week">🗓 This Week</label>
+        <label for="month">📆 This Month</label>
+    </div>
+
+    <!-- TAB CONTENT -->
+    <div class="food-forms">
+
+        <!-- TODAY -->
+        <div class="form today">
+            {% if today_meals %}
+                {% for meal in today_meals %}
+                <div class="meal-card">
+                    <div class="meal-left">
+                        <h4 class="meal-name">{{ meal.get_food_name }}</h4>
+                        <p class="meal-meta">
+                            Qty: {{ meal.quantity }} • {{ meal.date|date:"M d, Y" }}
+                        </p>
+                    </div>
+                    <div class="meal-right">
+                        <span class="badge calories">{{ meal.total_calories }} kcal</span>
+                        <span class="badge protein">{{ meal.total_protein }} g</span>
+                        <a href="{% url 'delete_meal' meal.id %}">
+                            <button class="delete-btn">Delete</button>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-meals">No meals today. <a href="{% url 'add_food' %}" style="color: #E74C3C; text-decoration: none; font-weight: 600;">Add one?</a></p>
+            {% endif %}
+        </div>
+
+        <!-- WEEK -->
+        <div class="form week">
+            {% if week_meals %}
+                {% for meal in week_meals %}
+                <div class="meal-card">
+                    <div class="meal-left">
+                        <h4 class="meal-name">{{ meal.get_food_name }}</h4>
+                        <p class="meal-meta">
+                            Qty: {{ meal.quantity }} • {{ meal.date|date:"M d, Y" }}
+                        </p>
+                    </div>
+                    <div class="meal-right">
+                        <span class="badge calories">{{ meal.total_calories }} kcal</span>
+                        <span class="badge protein">{{ meal.total_protein }} g</span>
+                        <a href="{% url 'delete_meal' meal.id %}">
+                            <button class="delete-btn">Delete</button>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-meals">No meals this week. <a href="{% url 'add_food' %}" style="color: #E74C3C; text-decoration: none; font-weight: 600;">Add one?</a></p>
+            {% endif %}
+        </div>
+
+        <!-- MONTH -->
+        <div class="form month">
+            {% if month_meals %}
+                {% for meal in month_meals %}
+                <div class="meal-card">
+                    <div class="meal-left">
+                        <h4 class="meal-name">{{ meal.get_food_name }}</h4>
+                        <p class="meal-meta">
+                            Qty: {{ meal.quantity }} • {{ meal.date|date:"M d, Y" }}
+                        </p>
+                    </div>
+                    <div class="meal-right">
+                        <span class="badge calories">{{ meal.total_calories }} kcal</span>
+                        <span class="badge protein">{{ meal.total_protein }} g</span>
+                        <a href="{% url 'delete_meal' meal.id %}">
+                            <button class="delete-btn">Delete</button>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-meals">No meals this month. <a href="{% url 'add_food' %}" style="color: #E74C3C; text-decoration: none; font-weight: 600;">Add one?</a></p>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+   
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+    <div class="logo">CalPro</div>
+    <div class="nav-links">
+        
+        
+       
+
+    </div>
+</nav>
+
+<div class="login-wrapper">
+    <div class="glass-card login-card">
+        <h2>Welcome Back </h2>
+
+       
+
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <input type="text" name="email" placeholder="Email" required>
+            <input type="password" name="password" id="password" placeholder="Password" required>
+           <p>New to tracking? <a href="/register/">Sign up</a></p>
+
+            <button class="button-91" type="submit">Login</button>
+           
+            
+            
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Database | Admin - CalPro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #c7a35a, #2C3E50);
+            color: #ffffff;
+            padding-bottom: 40px;
+        }
+
+        /* Admin Navbar - Gold Theme */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            position: relative;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #c7a35a;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-badge {
+            background: #c7a35a;
+            color: #2C3E50;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #e2d5b5;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: #c7a35a;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .signup {
+            background: transparent;
+            border: 2px solid #c7a35a;
+            color: #c7a35a;
+            padding: 8px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .signup:hover {
+            background: #c7a35a;
+            color: #2C3E50;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(199, 163, 90, 0.4);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* Page Title */
+        h2 {
+            text-align: center;
+            margin: 2rem 0;
+            color: #fff;
+            font-weight: 600;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+            position: relative;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        h2::after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #c7a35a, #d4af37);
+            margin: 0.8rem auto 0 auto;
+            border-radius: 2px;
+        }
+
+        /* Action Header */
+        .action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .add-btn {
+            background: #c7a35a;
+            color: #2C3E50;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(199, 163, 90, 0.3);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(199, 163, 90, 0.5);
+            background: #d4af37;
+        }
+
+        .total-count {
+            color: #e2d5b5;
+            font-size: 1rem;
+        }
+
+        /* Glass Card Container */
+        .glass-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: slideUp 0.6s ease-out 0.1s both;
+            overflow: hidden;
+        }
+
+        /* Table Styling - Gold Theme */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: rgba(199, 163, 90, 0.2);
+        }
+
+        th {
+            padding: 18px;
+            text-align: center;
+            font-weight: 600;
+            color: #c7a35a;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            border-bottom: 2px solid rgba(199, 163, 90, 0.3);
+        }
+
+        td {
+            padding: 16px 18px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #e2e3e8;
+        }
+
+        tbody tr {
+            transition: all 0.3s;
+        }
+
+        tbody tr:hover {
+            background: rgba(199, 163, 90, 0.1);
+            transform: scale(1.01);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Food Name Specific */
+        td:first-child {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Badges for Favorite */
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .badge-yes {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .badge-no {
+            background: rgba(255,255,255,0.1);
+            color: #95a5a6;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Action Links */
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .action-link {
+            padding: 6px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .edit-link {
+            color: #c7a35a;
+            background: rgba(199, 163, 90, 0.1);
+        }
+
+        .edit-link:hover {
+            background: rgba(199, 163, 90, 0.2);
+            border-color: #c7a35a;
+            transform: translateY(-2px);
+        }
+
+        .delete-link {
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .delete-link:hover {
+            background: rgba(231, 76, 60, 0.2);
+            border-color: #e74c3c;
+            transform: translateY(-2px);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #e2d5b5;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .container {
+                padding: 0 20px;
+            }
+
+            .glass-card {
+                padding: 20px;
+                overflow-x: auto;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            th, td {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+
+            .action-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            CalPro <span class="admin-badge">Admin</span>
+        </div>
+        <div class="nav-links">
+            <a href="/admindashboard/">Dashboard</a>  
+            <a href="{% url 'adminaddfood' %}">Add Food</a> 
+            <a href="/userlist/">Users</a> 
+            <a href="/adminlogout/"><button class="signup">Logout</button></a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>🍽️ Food Database</h2>
+
+        <div class="action-header">
+            <a href="{% url 'adminaddfood' %}" class="add-btn">+ Add New Food</a>
+            <span class="total-count">Total: {{ foods|length }} items</span>
+        </div>
+
+        <div class="glass-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Calories</th>
+                        <th>Protein (g)</th>
+                        <th>Favorite</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for food in foods %}
+                    <tr>
+                        <td>{{ food.name }}</td>
+                        <td>{{ food.calories }}</td>
+                        <td>{{ food.protein }}</td>
+                        <td>
+                            {% if food.fav %}
+                            <span class="badge badge-yes">✓ Yes</span>
+                            {% else %}
+                            <span class="badge badge-no">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            <a href="{% url 'admineditfood' food.id %}" class="action-link edit-link">Edit</a>
+                            <a href="{% url 'admindeletefood' food.id %}" class="action-link delete-link" onclick="return confirm('Delete {{ food.name }}?');">Delete</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🥗</div>
+                                <h3>No food items found</h3>
+                                <p>Start by adding food to the database.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
